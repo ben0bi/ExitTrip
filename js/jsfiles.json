@@ -1,4 +1,10 @@
 {  
-   "//": "Those are my files and this is a comment..",     
-   "JQUERY": "js/extlibs/jquery-3.6.0.min.js"
+   "//": "EXTERNAL LIBS",     
+   "JQUERY": "js/extlibs/jquery-3.6.0.min.js",
+   
+   "//": "Logging",
+   "LOG": "js/log.js",
+   
+   "//": "The Dungeon Generator.",
+   "DUNGEONGENERATOR": "js/dungeongenerator.js"
 }  

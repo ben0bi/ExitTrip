@@ -15,6 +15,7 @@ var ben0biJSLoader = function(configFilePath, asyncFunction)
 	if(!configFilePath)
 	{
 		console.log("ben0biLoader ERROR: You need to specify a config file for loading the JS files.");
+		return;
 	}
 
 	var m_func = null;

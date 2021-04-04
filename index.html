@@ -3,22 +3,38 @@
 <head>
 <title>Exit Trip</title>
 <meta charset="utf-8" />
+<script src="js/extlibs/ben0biJSLoader.js"></script>
+<style>
+	body, html
+	{
+		padding: 20;
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		font-family: monospace;
+	}
+	#content
+	{
+		width: 100%;
+		height: 100%;
+		overflow: scroll;
+		background-color: rgb(51, 51, 51);
+		color: #9A6;
+	}
+</style>
 </head>
 <body>
-<script src="js/extlibs/ben0biJSLoader/ben0biJSLoader.js"></script>
+<div id="content"></div>
 <script>
-
-function log(txt)
-{
-	console.log(txt);
-};
 
 function main()
 {
 	log("MAIN");
+	var dg = new DungeonGenerator();
+	dg.generate();
+	$("#content").html(dg.print());
 };
 
 ben0biJSLoader.recursiveLoad("js/jsfiles.json", main);
 </script>
-Hallo
 </body>
