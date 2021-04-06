@@ -13,26 +13,56 @@
 		height: 100%;
 		font-family: monospace;
 	}
-	#content
+	#dungeon
 	{
-		width: 100%;
-		height: 100%;
-		overflow: scroll;
 		background-color: rgb(51, 51, 51);
 		color: #9A6;
+		z-index: 0;
+	}
+	#playeritems
+	{
+		color: #69A
+	}
+	#monsters
+	{
+		color: #F33;
+	}
+	.cnt_overlay
+	{
+		position: absolute;
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
 	}
 </style>
 </head>
 <body>
-<div id="content"></div>
+<div id="dungeon" class="cnt_overlay"></div>
+<div id="playeritems" class="cnt_overlay"></div>
+<div id="monsters" class="cnt_overlay"></div>
 <script>
 
 function main()
 {
 	log("MAIN");
+	props = {
+		roomcount: 15,
+		mapsizex: 100,
+		mapsizey: 40,
+		minroomx: 3,
+		minroomy: 3,
+		maxroomx: 10,
+		maxroomy: 10
+	}
 	var dg = new DungeonGenerator();
+	dg.setProperties(props)
 	dg.generate();
-	$("#content").html(dg.print());
+	$("#dungeon").html(dg.print());
+
+	var player = new Player();
+	player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
 };
 
 ben0biJSLoader.recursiveLoad("js/jsfiles.json", main);

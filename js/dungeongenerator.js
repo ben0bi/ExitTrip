@@ -2,6 +2,12 @@
 	by Beni Yager
 	@ 2021, GIT
 	Grenchen Institute of Technology
+
+	Map fields:
+	.	: 	walkable, lighted Area
+		:	(space) nothing
+	#	:	wall
+	^	:	upwards (next dungeon)
 */
 
 // a map item
@@ -31,7 +37,7 @@ var DungeonRoom = function()
 	}
 
 	// set the size and center of this room.
-	this.setsize=function(w, h)
+	this.setSize=function(w, h)
 	{
 		me.width = w;
 		me.height= h;
@@ -40,7 +46,7 @@ var DungeonRoom = function()
 	}
 
 	// set the position and center of this room.
-	this.setposition = function(posx, posy)
+	this.setPosition = function(posx, posy)
 	{
 		me.posX=posx;
 		me.posY=posy;
@@ -59,13 +65,58 @@ var DungeonGenerator = function()
 	var m_mapSizeX = 100;
 	var m_mapSizeY = 50;
 
-	var m_minRoomX = 2;
-	var m_minRoomY = 2;
-	var m_maxRoomX = 10;
-	var m_maxRoomY = 10;
-	
+	var m_minRoomX = 3;
+	var m_minRoomY = 3;
+	var m_maxRoomX = 5;
+	var m_maxRoomY = 5;
+
+	// the position of the first room should be
+	// the same like the position of the last room
+	// in the preceding dungeon.
+	var m_initialX = 10;
+	var m_initialY = 10;
+
+	var playerStartX = 0;
+	var playerStartY = 0;
+
+	// the actual map.
 	var map = Array();
 
+	// get the player start position on the map.
+	// pos.x, pos.y
+	this.getPlayerStartPosition = function()
+	{
+		var pos= {
+			x: playerStartX,
+			y: playerStartY
+		}
+		return pos;
+	}
+	
+	// set some properties BEFORE you call generate.
+	this.setProperties =function(props)
+	{
+		if(props.hasOwnProperty('initialx'))
+			m_initialX=props.initialx;
+		if(props.hasOwnProperty('initialy'))
+			m_initialY=props.initialy;
+		if(props.hasOwnProperty('roomcount'))
+			m_roomCount = props.roomcount;
+		if(props.hasOwnProperty('mapsizex'))
+			m_mapSizeX=props.mapsizex;
+		if(props.hasOwnProperty('mapsizey'))
+			m_mapSizeY=props.mapsizey;
+		if(props.hasOwnProperty('minroomx'))
+			m_minRoomX=props.minroomx;
+		if(props.hasOwnProperty('minroomy'))
+			m_minRoomY=props.minroomy;
+		if(props.hasOwnProperty('maxroomx'))
+			m_maxRoomX=props.maxroomx;
+		if(props.hasOwnProperty('maxroomy'))
+			m_maxRoomY=props.maxroomy;
+	}
+
+	// generate a dungeon with the given properties.
 	this.generate = function()
 	{
 		var rooms = Array();
@@ -74,11 +125,16 @@ var DungeonGenerator = function()
 		for(var i=0;i<m_roomCount;i++)
 		{
 			var room = new DungeonRoom();
-			room.setsize(m_minRoomX + parseInt(Math.random()*(m_maxRoomX-m_minRoomX)),
+			room.setSize(m_minRoomX + parseInt(Math.random()*(m_maxRoomX-m_minRoomX)),
 						m_minRoomY + parseInt(Math.random()*(m_maxRoomY-m_minRoomY)));
 			// initial start position:
-			room.setposition(parseInt(Math.random()*(m_mapSizeX-room.width-1))+1, 
-							 parseInt(Math.random()*(m_mapSizeY-room.height-1))+1);
+			if(i==0)
+			{
+				room.setPosition(m_initialX,m_initialY);
+			}else{
+				room.setPosition(parseInt(Math.random()*(m_mapSizeX-room.width-2))+1, 
+								 parseInt(Math.random()*(m_mapSizeY-room.height-2))+1);
+			}
 			rooms.push(room);
 		
 		}
@@ -91,9 +147,11 @@ var DungeonGenerator = function()
 			done=true;
 			steps+=1;
 			log("step "+steps);
-			for(var i=0;i<rooms.length;i++)
+			for(var i=1;i<rooms.length;i++)
 			{
-				log("pos room "+i);
+				// don't move room number 0!
+
+//				log("pos room "+i);
 				// check for intersect in each room.
 				for(var q=0;q<rooms.length;q++)
 				{
@@ -101,9 +159,9 @@ var DungeonGenerator = function()
 					{
 						if(rooms[i].intersects(rooms[q]))
 						{
-							log("intersection found, #"+i+"<>#"+q)
-							rooms[i].setposition(parseInt(Math.random()*(m_mapSizeX-room.width-1))+1,
-												 parseInt(Math.random()*(m_mapSizeY-room.height-1))+1);
+							log("! intersection found, #"+i+"<>#"+q)
+							rooms[i].setPosition(parseInt(Math.random()*(m_mapSizeX-room.width-2))+1,
+												 parseInt(Math.random()*(m_mapSizeY-room.height-2))+1);
 							done=false;
 						}
 					}
@@ -112,6 +170,10 @@ var DungeonGenerator = function()
 			if(steps>=100)
 				done=true;
 		}
+
+		log("2.1 set player start position");
+		playerStartX=rooms[0].posX+parseInt(Math.random()*rooms[0].width);
+		playerStartY=rooms[0].posY+parseInt(Math.random()*rooms[0].height);
 
 		log("3. import rooms into map");
 		log("3.1 generate map");
@@ -128,7 +190,7 @@ var DungeonGenerator = function()
 				{
 					var posx=room.posX+rx;
 					var posy=room.posY+ry;
-					_setMap(posx,posy, ".");
+					me.setMap(posx,posy, ".");
 				}
 			}
 
@@ -163,12 +225,12 @@ var DungeonGenerator = function()
 			{
 				for(var x=x2;x<x1;x++)
 				{
-					_setMap(x,room1.centerY,".");
+					me.setMap(x,room1.centerY,".");
 				}
 			}else{
 				for(var x=x1;x<=x2;x++)
 				{
-					_setMap(x,room1.centerY,".");
+					me.setMap(x,room1.centerY,".");
 				}	
 			}
 
@@ -179,12 +241,12 @@ var DungeonGenerator = function()
 			{
 				for(var y=y2;y<y1;y++)
 				{
-					_setMap(x2,y,".");
+					me.setMap(x2,y,".");
 				}
 			}else{
 				for(var y=y1;y<y2;y++)
 				{
-					_setMap(x2,y, ".");
+					me.setMap(x2,y, ".");
 				}
 			}
 		}
@@ -196,13 +258,13 @@ var DungeonGenerator = function()
 			var row=map[y];
 			for(var x=0;x<row.length;x++)
 			{
-				if(_getMap(x,y)==".")
+				if(me.getMap(x,y)==".")
 				{
 					for(var xx=-1;xx<=1;xx++)
 					{
 						for(var yy=-1;yy<=1;yy++)
 						{
-							if(_getMap(x+xx,y+yy)==" ") _setMap(x+xx,y+yy,"#");
+							if(me.getMap(x+xx,y+yy)==" ") me.setMap(x+xx,y+yy,"#");
 						}
 					}	
 				}
@@ -223,7 +285,7 @@ var DungeonGenerator = function()
 	}
 
 	// get the map type at a specific position
-	var _getMap=function(x,y)
+	this.getMap=function(x,y)
 	{
 		if(_isInMap(x,y))
 		{
@@ -232,8 +294,22 @@ var DungeonGenerator = function()
 		return false;
 	}
 
+	// check if a field is walkable (with a . or something other)
+	this.isWalkable = function(posX, posY)
+	{
+		switch(this.getMap(posX, posY))
+		{
+			case '.':
+				return true;
+				break;
+			default:
+				return false;
+		}
+		return false;
+	}
+
 	// set a map item
-	var _setMap = function(posx,posy, type)
+	this.setMap = function(posx,posy, type)
 	{
 		if(_isInMap(posx,posy))
 		{
