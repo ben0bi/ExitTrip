@@ -36,6 +36,10 @@
 		height: 100%;
 		overflow: hidden;
 	}
+
+	/* MAP CLASSES */
+	.ground {color: #777;}
+	.player {color: #FF3;font-weight: bolder;}
 </style>
 </head>
 <body>
@@ -59,10 +63,13 @@ function main()
 	var dg = new DungeonGenerator();
 	dg.setProperties(props)
 	dg.generate();
-	$("#dungeon").html(dg.print());
 
 	var player = new Player();
 	player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
+	player.move(0,dg);
+
+	$("#dungeon").html(dg.print(player));
+
 };
 
 ben0biJSLoader.recursiveLoad("js/jsfiles.json", main);

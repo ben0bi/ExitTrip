@@ -4,7 +4,7 @@
 	Grenchen Institute of Technology
 
 	Map fields:
-	.	: 	walkable, lighted Area
+	.	: 	walkable, lighted area
 		:	(space) nothing
 	#	:	wall
 	^	:	upwards (next dungeon)
@@ -14,6 +14,7 @@
 var DungeonMapItem = function(itemTypeChar)
 {
 	this.type=itemTypeChar;
+	this.visible=false;
 }
 
 // a generated room, before it is in the map.
@@ -96,23 +97,23 @@ var DungeonGenerator = function()
 	// set some properties BEFORE you call generate.
 	this.setProperties =function(props)
 	{
-		if(props.hasOwnProperty('initialx'))
+		if('initialx' in props)
 			m_initialX=props.initialx;
-		if(props.hasOwnProperty('initialy'))
+		if('initialy' in props)
 			m_initialY=props.initialy;
-		if(props.hasOwnProperty('roomcount'))
+		if('roomcount' in props)
 			m_roomCount = props.roomcount;
-		if(props.hasOwnProperty('mapsizex'))
+		if('mapsizex' in props)
 			m_mapSizeX=props.mapsizex;
-		if(props.hasOwnProperty('mapsizey'))
+		if('mapsizey' in props)
 			m_mapSizeY=props.mapsizey;
-		if(props.hasOwnProperty('minroomx'))
+		if('minroomx' in props)
 			m_minRoomX=props.minroomx;
-		if(props.hasOwnProperty('minroomy'))
+		if('minroomy' in props)
 			m_minRoomY=props.minroomy;
-		if(props.hasOwnProperty('maxroomx'))
+		if('maxroomx' in props)
 			m_maxRoomX=props.maxroomx;
-		if(props.hasOwnProperty('maxroomy'))
+		if('maxroomy' in props)
 			m_maxRoomY=props.maxroomy;
 	}
 
@@ -317,6 +318,15 @@ var DungeonGenerator = function()
 			map[posy][posx].type=type;
 		}
 	}
+
+	// show or hide a map item.
+	this.setVisible=function(posx, posy, visible=true)
+	{
+		if(_isInMap(posx,posy))
+		{
+			map[posy][posx].visible = visible;
+		}
+	}
 	// create a map with empty map items in the right size and return it.
 	this.createEmptyMap = function()
 	{
@@ -333,9 +343,10 @@ var DungeonGenerator = function()
 		return m;
 	}
 
-	this.print = function()
+	this.print = function(player)
 	{
 		log("Printing Dungeon");
+		
 		var result=""
 		for(var y=0;y<map.length;y++)
 		{
@@ -349,10 +360,18 @@ var DungeonGenerator = function()
 					case '<': r="&lt;";break;
 					case '>': r="&gt;";break;
 					case ' ': r="&nbsp;";break;
+					case '.': r="<b class='ground'>.</b>";break;
 					default:
 						break;
 				}
-				result+=r;
+
+				if(x==player.getPosition().x && y==player.getPosition().y)
+					r="<b class='player'>@</b>";
+
+				if(row[x].visible==true)
+					result+=r;
+				else
+					result+="&nbsp;"
 			}
 			result+="<br />"
 		}
