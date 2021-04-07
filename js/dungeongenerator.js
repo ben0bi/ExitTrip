@@ -213,11 +213,16 @@ var DungeonGenerator = function()
 		}
 
 		log("4. create connections");
+		log("4.1 sort rooms, but only for connections");
+		var done = false;
+		var rr=[...rooms];
+		rr.sort(function(a,b){return (a.posX+a.posY)-(b.posX+b.posY);});
+		log("4.2 connect")
 		// create connections between all rooms one after eachother.
 		for(var i=0;i<rooms.length-1;i++)
 		{
-			var room1=rooms[i];
-			var room2=rooms[i+1];
+			var room1=rr[i];
+			var room2=rr[i+1];
 			
 			var x1=room1.centerX;
 			var x2=room2.centerX;
@@ -345,7 +350,7 @@ var DungeonGenerator = function()
 
 	this.print = function(player)
 	{
-		log("Printing Dungeon");
+		//log("Printing Dungeon");
 		
 		var result=""
 		for(var y=0;y<map.length;y++)
