@@ -69,8 +69,23 @@ function main()
 	player.move(0,dg);
 
 	$("#dungeon").html(dg.print(player));
+	document.onkeydown = function(evt)
+	{
+		evt = evt || window.event;
+		var charCode = evt.keyCode || evt.which;
+		log("CHAR: "+charCode);
+		switch(charCode)
+		{
+			case 37: player.move(1, dg); break;
+			case 38: player.move(2, dg); break;
+			case 39: player.move(3, dg); break;
+			case 40: player.move(4, dg); break;
+		}
+		$("#dungeon").html(dg.print(player));
+	}
 
 };
+
 
 ben0biJSLoader.recursiveLoad("js/jsfiles.json", main);
 </script>
