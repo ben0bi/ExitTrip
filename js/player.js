@@ -14,7 +14,10 @@ var Player = function()
 {
     var m_posX = 0;
     var m_posY = 0;
-    var m_sight = 3;
+    var m_sight = 2;
+    var m_health = 15;
+    var m_maxHealth = 15;
+    var m_coins=0; // credits.
 
     this.setPosition=function(posX, posY)
     {
@@ -27,6 +30,16 @@ var Player = function()
     {
         var pos={x:m_posX,y:m_posY};
         return pos;
+    }
+
+    // show some player values.
+    this.printValues=function()
+    {
+        var html="";
+        html+="&#9829; "+m_health+" / "+m_maxHealth+"<br />";
+        html+="&#8353; "+m_coins+"<br />";
+        html+="<small>&#128065; "+m_sight+"</small><br />";
+        return html;
     }
 
     this.move=function(direction, dungeon)
@@ -52,6 +65,24 @@ var Player = function()
                 break;
             
         }
+
+        // check if a new dungeon has to be created.
+        var mt=dungeon.getMap(m_posX, m_posY);
+        if(mt=='^')
+        {
+            var rooms = dungeon.getRoomProps();
+            var lastroom = rooms[rooms.length-1];
+            log("GOING UPWARDS at:" +lastroom.posX+" "+lastroom.posY+" "+lastroom.width+" "+lastroom.height);
+            var props = {
+                initialx: lastroom.posX,
+                initialy: lastroom.posY,
+                initialwidth: lastroom.width,
+                initialheight: lastroom.height
+            }
+            dungeon.setProperties(props);
+            dungeon.generate();
+        }
+
         _showview(dungeon);
     }
 

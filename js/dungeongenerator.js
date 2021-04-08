@@ -17,6 +17,15 @@ var DungeonMapItem = function(itemTypeChar)
 	this.visible=false;
 }
 
+// a pickable item
+var DungeonItem = function()
+{
+	this.posX = 0;
+	this.posY = 0;
+	this.type="coin";
+	this.amount = 10;
+}
+
 // a generated room, before it is in the map.
 var DungeonRoom = function()
 {
@@ -76,12 +85,20 @@ var DungeonGenerator = function()
 	// in the preceding dungeon.
 	var m_initialX = 10;
 	var m_initialY = 10;
+	var m_initialWidth=0; // 0 for random.
+	var m_initialHeight=0; // 0 for random.
 
 	var playerStartX = 0;
 	var playerStartY = 0;
 
+	// the room properties.
+	var m_rooms=Array();
+
 	// the actual map.
-	var map = Array();
+	var m_map = Array();
+
+	// the items on the map.
+	var m_items = Array();
 
 	// get the player start position on the map.
 	// pos.x, pos.y
@@ -101,6 +118,10 @@ var DungeonGenerator = function()
 			m_initialX=props.initialx;
 		if('initialy' in props)
 			m_initialY=props.initialy;
+		if('initialwidth' in props)
+			m_initialWidth=props.initialwidth;
+		if('initialheight' in props)
+			m_initialHeight=props.initialheight;
 		if('roomcount' in props)
 			m_roomCount = props.roomcount;
 		if('mapsizex' in props)
@@ -120,14 +141,19 @@ var DungeonGenerator = function()
 	// generate a dungeon with the given properties.
 	this.generate = function()
 	{
-		var rooms = Array();
+		m_rooms = Array();
 		log("Generating Dungeon...");
 		log("1. Creating Rooms")
 		for(var i=0;i<m_roomCount;i++)
 		{
 			var room = new DungeonRoom();
-			room.setSize(m_minRoomX + parseInt(Math.random()*(m_maxRoomX-m_minRoomX)),
-						m_minRoomY + parseInt(Math.random()*(m_maxRoomY-m_minRoomY)));
+			var sizex=m_minRoomX + parseInt(Math.random()*(m_maxRoomX-m_minRoomX));
+			var sizey=m_minRoomY + parseInt(Math.random()*(m_maxRoomY-m_minRoomY));
+			if(i==0 && m_initialWidth!=0)
+				sizex=m_initialWidth;
+			if(i==0 && m_initialHeight!=0)
+				sizey=m_initialHeight;
+			room.setSize(sizex,sizey);
 			// initial start position:
 			if(i==0)
 			{
@@ -136,8 +162,7 @@ var DungeonGenerator = function()
 				room.setPosition(parseInt(Math.random()*(m_mapSizeX-room.width-2))+1, 
 								 parseInt(Math.random()*(m_mapSizeY-room.height-2))+1);
 			}
-			rooms.push(room);
-		
+			m_rooms.push(room);
 		}
 		log("2. Reposition Rooms");
 
@@ -148,20 +173,20 @@ var DungeonGenerator = function()
 			done=true;
 			steps+=1;
 			log("step "+steps);
-			for(var i=1;i<rooms.length;i++)
+			for(var i=1;i<m_rooms.length;i++)
 			{
 				// don't move room number 0!
 
 //				log("pos room "+i);
 				// check for intersect in each room.
-				for(var q=0;q<rooms.length;q++)
+				for(var q=0;q<m_rooms.length;q++)
 				{
 					if(q!=i)
 					{
-						if(rooms[i].intersects(rooms[q]))
+						if(m_rooms[i].intersects(m_rooms[q]))
 						{
 							log("! intersection found, #"+i+"<>#"+q)
-							rooms[i].setPosition(parseInt(Math.random()*(m_mapSizeX-room.width-2))+1,
+							m_rooms[i].setPosition(parseInt(Math.random()*(m_mapSizeX-room.width-2))+1,
 												 parseInt(Math.random()*(m_mapSizeY-room.height-2))+1);
 							done=false;
 						}
@@ -173,17 +198,17 @@ var DungeonGenerator = function()
 		}
 
 		log("2.1 set player start position");
-		playerStartX=rooms[0].posX+parseInt(Math.random()*rooms[0].width);
-		playerStartY=rooms[0].posY+parseInt(Math.random()*rooms[0].height);
+		playerStartX=m_rooms[0].posX+parseInt(Math.random()*m_rooms[0].width);
+		playerStartY=m_rooms[0].posY+parseInt(Math.random()*m_rooms[0].height);
 
 		log("3. import rooms into map");
 		log("3.1 generate map");
-		map = me.createEmptyMap();
+		m_map = me.createEmptyMap();
 	
 		log("3.2 implement rooms")
-		for(var r=0;r<rooms.length;r++)
+		for(var r=0;r<m_rooms.length;r++)
 		{
-			var room=rooms[r];
+			var room=m_rooms[r];
 			log("room #"+r+" x"+room.posX+" y"+room.posY+" w"+room.width+" h"+room.height);
 			for(var ry=0;ry<room.height;ry++)
 			{
@@ -215,11 +240,11 @@ var DungeonGenerator = function()
 		log("4. create connections");
 		log("4.1 sort rooms, but only for connections");
 		var done = false;
-		var rr=[...rooms];
+		var rr=[...m_rooms];
 		rr.sort(function(a,b){return (a.posX+a.posY)-(b.posX+b.posY);});
 		log("4.2 connect")
 		// create connections between all rooms one after eachother.
-		for(var i=0;i<rooms.length-1;i++)
+		for(var i=0;i<rr.length-1;i++)
 		{
 			var room1=rr[i];
 			var room2=rr[i+1];
@@ -259,9 +284,52 @@ var DungeonGenerator = function()
 		
 		// border generation v2: around all . when it is a space ' '.
 		log("5. create borders")
-		for(var y=0;y<map.length;y++)
+		this.createBorders();
+
+		log("6. place exit")
+		// get last room and place exit in it.
+		var room = m_rooms[m_rooms.length-1];
+		this.setMap(room.posX+parseInt(Math.random()*room.width), room.posY+parseInt(Math.random()*room.height),'^');
+
+		log("7. create items")
+		var itempercentage=50;
+		var anotheritempercentage=50;
+
+		m_items = Array();
+		for(var r=0;r<m_rooms.length;r++)
 		{
-			var row=map[y];
+			var done = false;
+			var room = m_rooms[r];
+			while(!done)
+			{
+				done = true;
+				var place=Math.random()*100;
+				// TODO: globalize that
+					// itempercentage
+					// anotheritempercentage
+				// place the item or not?
+				if(place<=itempercentage)
+				{
+					var item = new DungeonItem();
+					item.amount = parseInt(Math.random())
+					item.posX = room.posX+parseInt(Math.random()*room.width);
+					item.posY= room.posY+parseInt(Math.random()*room.height);
+					m_items.push(item);
+				}
+				// maybe place another item?
+				var place=Math.random()*100;
+				if(place<=anotheritempercentage)
+					done = false;
+			}
+		}
+	};
+
+	// create # walls around .
+	this.createBorders=function()
+	{
+		for(var y=0;y<m_map.length;y++)
+		{
+			var row=m_map[y];
 			for(var x=0;x<row.length;x++)
 			{
 				if(me.getMap(x,y)==".")
@@ -276,14 +344,14 @@ var DungeonGenerator = function()
 				}
 			}
 		}
-	};
-	
+	}
+
 	// check if a position is in the created map, respecting array sizes.
 	var _isInMap=function(x,y)
 	{
-		if(y>=0 && y<map.length)
+		if(y>=0 && y<m_map.length)
 		{
-			var row=map[y];
+			var row=m_map[y];
 			if(x>=0 && x<row.length)
 				return true;
 		}
@@ -295,7 +363,7 @@ var DungeonGenerator = function()
 	{
 		if(_isInMap(x,y))
 		{
-			return map[y][x].type;
+			return m_map[y][x].type;
 		}
 		return false;
 	}
@@ -306,6 +374,7 @@ var DungeonGenerator = function()
 		switch(this.getMap(posX, posY))
 		{
 			case '.':
+			case '^':
 				return true;
 				break;
 			default:
@@ -320,7 +389,7 @@ var DungeonGenerator = function()
 		if(_isInMap(posx,posy))
 		{
 //			log("set map "+posx+" "+ posy+" "+ type);
-			map[posy][posx].type=type;
+			m_map[posy][posx].type=type;
 		}
 	}
 
@@ -329,7 +398,7 @@ var DungeonGenerator = function()
 	{
 		if(_isInMap(posx,posy))
 		{
-			map[posy][posx].visible = visible;
+			m_map[posy][posx].visible = visible;
 		}
 	}
 	// create a map with empty map items in the right size and return it.
@@ -348,14 +417,18 @@ var DungeonGenerator = function()
 		return m;
 	}
 
+	// get the room properties.
+	this.getRoomProps=function() {return m_rooms;}
+
+	// print the stuff on your display.
 	this.print = function(player)
 	{
 		//log("Printing Dungeon");
 		
 		var result=""
-		for(var y=0;y<map.length;y++)
+		for(var y=0;y<m_map.length;y++)
 		{
-			var row = map[y];
+			var row = m_map[y];
 			for(var x=0;x<row.length;x++)
 			{
 				var t=row[x].type;
@@ -366,10 +439,30 @@ var DungeonGenerator = function()
 					case '>': r="&gt;";break;
 					case ' ': r="&nbsp;";break;
 					case '.': r="<b class='ground'>.</b>";break;
+					case '^': r="<b class='stairs'>&#8796;</b>";break;
 					default:
 						break;
 				}
 
+				// maybe show item.
+				var itm;
+				for(var it=0;it<m_items.length;it++)
+				{
+					itm=m_items[it];
+					if(itm.posX==x && itm.posY==y)
+					{
+						switch(itm.type)
+						{
+							case 'coin':
+								r="<b class='item'>$</b>"
+								break;
+							default:
+								r="<b class='item'>i</b>"
+						}
+					}
+				}
+
+				// maybe set player position.
 				if(x==player.getPosition().x && y==player.getPosition().y)
 					r="<b class='player'>@</b>";
 

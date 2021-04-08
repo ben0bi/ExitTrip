@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ansi codes of interest</title>
+        <meta charset="utf-8" />
+        <style>
+            body, html
+            {
+                background-color: rgb(51,51,51);
+                color: #9A6;
+                font-family: monospace;
+            }
+        </style>
+        <script src="js/extlibs/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        &#3435;en0bi enterprises<br />
+        &#9827;=&#9831;=tree<br />
+        &#937;=portal<br />
+        &#1071;=umgekehrtes R<br />
+        &dagger;=rip stone<br />
+        &#3204;=spirale<br />
+        &#4726;=human<br />
+        &#4734;=demon<br />
+        &#8258;=3 stars<br />
+        &#8270;=1 star<br />
+        &#8273;=2 stars<br />
+        &#8277;=big star<br />
+        &#8482;=trademark<br />
+        &#9096;=schiffssteuerruder<br />
+        &#9617;=&#9618;=&#9619;=&#9608;=felder<br />
+        &#128065;=eye<br />
+
+        <div id="content"></div>
+        <script>
+            var html="<table>";
+
+                for(i=8592;i<=8703;i++)
+                {
+                    html+="<tr><td>"+i+"</td><td> &#"+i+"; </td></tr>";
+                }
+
+                // "abzeichen"
+                for(i=8769;i<=8831;i++)
+                {
+                    html+="<tr><td>"+i+"</td><td> &#"+i+"; </td></tr>";
+                }
+                for(i=8853;i<=8865;i++)
+                {
+                    html+="<tr><td>"+i+"</td><td> &#"+i+"; </td></tr>";
+                }
+
+                for(i=9812;i<=9831;i++)
+                {
+                    html+="<tr><td>"+i+"</td><td> &#"+i+"; </td></tr>";
+                }
+
+                html+="</table>"
+                $('#content').html(html);
+        </script>
+    </body>
+</html>

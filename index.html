@@ -16,16 +16,8 @@
 	#dungeon
 	{
 		background-color: rgb(51, 51, 51);
-		color: #9A6;
+		color: #9C6;
 		z-index: 0;
-	}
-	#playeritems
-	{
-		color: #69A
-	}
-	#monsters
-	{
-		color: #F33;
 	}
 	.cnt_overlay
 	{
@@ -37,21 +29,42 @@
 		overflow: hidden;
 	}
 
+	#values
+	{
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		min-width: 150px;
+		font-size: 20pt;
+		font-family: monospace;
+		background-color: #3A3;
+		color: #000000;
+	}
+
 	/* MAP CLASSES */
 	.ground {color: #777;}
 	.player {color: #FF3;font-weight: bolder;}
+	.stairs {color: rgb(219, 205, 0);}
+	.item {color: #69A;}
+	.monster {color: #F33;}
+
 </style>
 </head>
 <body>
 <div id="dungeon" class="cnt_overlay"></div>
-<div id="playeritems" class="cnt_overlay"></div>
-<div id="monsters" class="cnt_overlay"></div>
+<div id="values"></div>
 <script>
+
+function print(dg,player)
+{
+	$("#dungeon").html(dg.print(player));
+	$("#values").html(player.printValues());
+}
 
 function main()
 {
 	log("MAIN");
-	props = {
+	var props = {
 		roomcount: 15,
 		mapsizex: 100,
 		mapsizey: 40,
@@ -68,7 +81,7 @@ function main()
 	player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
 	player.move(0,dg);
 
-	$("#dungeon").html(dg.print(player));
+	print(dg, player);
 	document.onkeydown = function(evt)
 	{
 		evt = evt || window.event;
@@ -81,11 +94,9 @@ function main()
 			case 39: player.move(3, dg); break;
 			case 40: player.move(4, dg); break;
 		}
-		$("#dungeon").html(dg.print(player));
-	}
-
+		print(dg,player)
+	};
 };
-
 
 ben0biJSLoader.recursiveLoad("js/jsfiles.json", main);
 </script>
