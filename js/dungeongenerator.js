@@ -480,11 +480,20 @@ var DungeonGenerator = function()
 			{
 				var t=row[x].type;
 				var r=row[x].type;
+
+				// break if not visible.
+				if(row[x].visible==false)
+				{
+					result+="&nbsp;"
+					continue;
+				}
+
 				switch(t)
 				{
 					case '<': r="&lt;";break;
 					case '>': r="&gt;";break;
-					case ' ': r="&nbsp;";break;
+					case ' ': r="&#9617;";break;
+					case '#': r="&#9608;";break;
 					case '.': r="<b class='ground'>.</b>";break;
 					case '^': r="<b class='stairs'>^</b>";break;
 					default:
@@ -533,10 +542,7 @@ var DungeonGenerator = function()
 				if(x==player.getPosition().x && y==player.getPosition().y)
 					r="<b class='player'>@</b>";
 
-				if(row[x].visible==true)
-					result+=r;
-				else
-					result+="&nbsp;"
+				result+=r;
 			}
 			result+="<br />"
 		}
