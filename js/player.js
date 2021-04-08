@@ -66,6 +66,33 @@ var Player = function()
             
         }
 
+        // check if the player can pick up some items.
+        if(dungeon.checkForItem(m_posX,m_posY)==true)
+        {
+            var items=dungeon.getItems();
+            var newitems=Array();
+            for(var it=0;it<items.length;it++)
+            {
+                var item=items[it];
+                if(item.posX==m_posX && item.posY==m_posY)
+                {
+                    // what item is it?
+                    switch(item.type)
+                    {
+                        case "coin":
+                            log("YOU PICK UP "+item.amount+" COINS.")
+                            m_coins+=item.amount;
+                            break;
+                        default:
+                            break;
+                    }
+                }else{
+                    newitems.push(item);
+                }
+            }
+            dungeon.setItems(newitems);
+        }
+
         // check if a new dungeon has to be created.
         var mt=dungeon.getMap(m_posX, m_posY);
         if(mt=='^')

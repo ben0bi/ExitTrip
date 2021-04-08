@@ -14,7 +14,7 @@
 var DungeonMapItem = function(itemTypeChar)
 {
 	this.type=itemTypeChar;
-	this.visible=false;
+	this.visible=false;  // SET THIS TO TRUE TO SEE THE WHOLE MAP <---
 }
 
 // a pickable item
@@ -24,6 +24,16 @@ var DungeonItem = function()
 	this.posY = 0;
 	this.type="coin";
 	this.amount = 10;
+}
+
+// a dungeon monster
+var DungeonMonster = function()
+{
+	this.health=5;
+	this.posX=0;
+	this.posY=0;
+	this.type="MieserKadser";
+
 }
 
 // a generated room, before it is in the map.
@@ -100,6 +110,9 @@ var DungeonGenerator = function()
 	// the items on the map.
 	var m_items = Array();
 
+	// the monsters on the map.
+	var m_monsters = Array();
+
 	// get the player start position on the map.
 	// pos.x, pos.y
 	this.getPlayerStartPosition = function()
@@ -109,6 +122,21 @@ var DungeonGenerator = function()
 			y: playerStartY
 		}
 		return pos;
+	}
+
+	this.getItems=function() {return m_items;}
+	this.setItems=function(items) {m_items=items;}
+
+	// check if an item is at position x,y
+	this.checkForItem=function(x,y)
+	{
+		for(var i=0;i<m_items.length;i++)
+		{
+			var item=m_items[i];
+			if(item.posX==x && item.posY==y)
+				return true;
+		}
+		return false;
 	}
 	
 	// set some properties BEFORE you call generate.
@@ -219,22 +247,6 @@ var DungeonGenerator = function()
 					me.setMap(posx,posy, ".");
 				}
 			}
-
-// create room walls v1: around rooms
-/*			for(var rx=-1;rx<room.width+1;rx++)
-			{
-				var posx=room.posX+rx;
-				_setMap(posx, room.posY-1,"#");
-				_setMap(posx, room.posY+room.height,"#");
-			}
-
-			for(var ry=0;ry<room.height;ry++)
-			{
-				var posy=room.posY+ry;
-				_setMap(room.posX-1,posy, "#");
-				_setMap(room.posX+room.width, posy,"#");
-			}
-*/
 		}
 
 		log("4. create connections");
@@ -291,15 +303,20 @@ var DungeonGenerator = function()
 		var room = m_rooms[m_rooms.length-1];
 		this.setMap(room.posX+parseInt(Math.random()*room.width), room.posY+parseInt(Math.random()*room.height),'^');
 
-		log("7. create items")
+		log("7. create items and monsters")
 		var itempercentage=50;
 		var anotheritempercentage=50;
 
+		var monsterpercentage=30;
+		var anothermonsterpercentage=30;
+
 		m_items = Array();
+		m_monsters=Array();
 		for(var r=0;r<m_rooms.length;r++)
 		{
 			var done = false;
 			var room = m_rooms[r];
+			// place items
 			while(!done)
 			{
 				done = true;
@@ -311,7 +328,8 @@ var DungeonGenerator = function()
 				if(place<=itempercentage)
 				{
 					var item = new DungeonItem();
-					item.amount = parseInt(Math.random())
+					// TODO: change percentage by player level or such.
+					item.amount = parseInt(Math.random()*15)+1;
 					item.posX = room.posX+parseInt(Math.random()*room.width);
 					item.posY= room.posY+parseInt(Math.random()*room.height);
 					m_items.push(item);
@@ -319,6 +337,35 @@ var DungeonGenerator = function()
 				// maybe place another item?
 				var place=Math.random()*100;
 				if(place<=anotheritempercentage)
+					done = false;
+			}
+
+			// no monsters in start room, please.
+			if(r==0)
+				continue;
+
+			// place monsters
+			done=false;
+			while(!done)
+			{
+				done = true;
+				var place=Math.random()*100;
+				// TODO: globalize that
+					// itempercentage
+					// anotheritempercentage
+					// monsterpercentage
+					// anothermonsterpercentage
+				// place the item or not?
+				if(place<=monsterpercentage)
+				{
+					var monster = new DungeonMonster();
+					monster.posX = room.posX+parseInt(Math.random()*room.width);
+					monster.posY= room.posY+parseInt(Math.random()*room.height);
+					m_monsters.push(monster);
+				}
+				// maybe place another item?
+				var place=Math.random()*100;
+				if(place<=anothermonsterpercentage)
 					done = false;
 			}
 		}
@@ -439,7 +486,7 @@ var DungeonGenerator = function()
 					case '>': r="&gt;";break;
 					case ' ': r="&nbsp;";break;
 					case '.': r="<b class='ground'>.</b>";break;
-					case '^': r="<b class='stairs'>&#8796;</b>";break;
+					case '^': r="<b class='stairs'>^</b>";break;
 					default:
 						break;
 				}
@@ -461,6 +508,26 @@ var DungeonGenerator = function()
 						}
 					}
 				}
+
+				// maybe show monster.
+				var monster;
+				for(var mt=0;mt<m_monsters.length;mt++)
+				{
+					monster=m_monsters[mt];
+					if(monster.posX==x && monster.posY==y)
+					{
+						/*switch(itm.type)
+						{
+							case 'coin':
+								r="<b class='item'>$</b>"
+								break;
+							default:
+								r="<b class='item'>i</b>"
+						}*/
+						r="<b class='monster'>M</b>";
+					}
+				}
+
 
 				// maybe set player position.
 				if(x==player.getPosition().x && y==player.getPosition().y)
