@@ -8,6 +8,9 @@
 		:	(space) nothing
 	#	:	wall
 	^	:	upwards (next dungeon)
+
+	// --> The generator also acts as actual dungeon.
+	// Get Stuff with: getItems, getMonsters, getRoomProperties, getMap, getMessage
 */
 
 // a map item
@@ -112,6 +115,11 @@ var DungeonGenerator = function()
 
 	// the monsters on the map.
 	var m_monsters = Array();
+
+	// the message
+	var m_message = "";
+	this.setMessage=function(text) {m_message=text;}
+	this.getMessage=function() {return m_message;}
 
 	// get the player start position on the map.
 	// pos.x, pos.y

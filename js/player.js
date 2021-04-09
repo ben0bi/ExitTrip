@@ -10,6 +10,11 @@ by Beni Yager, 2021
     4 Down
 */
 
+// the message
+var g_message = "";
+var setMessage=function(text) {g_message=text;}
+var getMessage=function() {return g_message;}
+
 var Player = function()
 {
     var m_posX = 0;
@@ -44,6 +49,7 @@ var Player = function()
 
     this.move=function(direction, dungeon)
     {
+        setMessage("");
         switch(direction)
         {
             case 0: break; // used to call showview.
@@ -62,8 +68,7 @@ var Player = function()
             case 4: // down
                 if(dungeon.isWalkable(m_posX, m_posY+1))
                     m_posY+=1;
-                break;
-            
+                break;   
         }
 
         // check if the player can pick up some items.
@@ -80,10 +85,11 @@ var Player = function()
                     switch(item.type)
                     {
                         case "coin":
-                            log("YOU PICK UP "+item.amount+" COINS.")
+                            setMessage("You pick up "+item.amount+" CryptoBenis.");
                             m_coins+=item.amount;
                             break;
                         default:
+                            setMessage("You pick up an unidentified item.");
                             break;
                     }
                 }else{
@@ -99,7 +105,7 @@ var Player = function()
         {
             var rooms = dungeon.getRoomProps();
             var lastroom = rooms[rooms.length-1];
-            log("GOING UPWARDS at:" +lastroom.posX+" "+lastroom.posY+" "+lastroom.width+" "+lastroom.height);
+            setMessage("You go one chapter upwards.");
             var props = {
                 initialx: lastroom.posX,
                 initialy: lastroom.posY,
@@ -109,7 +115,6 @@ var Player = function()
             dungeon.setProperties(props);
             dungeon.generate();
         }
-
         _showview(dungeon);
     }
 

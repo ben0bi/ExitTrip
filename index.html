@@ -29,17 +29,40 @@
 		overflow: hidden;
 	}
 
-	#values
+	#values, #message
 	{
 		position: absolute;
 		top: 0px;
 		right: 0px;
-		min-width: 200px;
-		font-size: 20pt;
+		min-width: 300px;
 		font-family: monospace;
 		background-color: #3A3;
 		color: #000000;
 	}
+
+	#values
+	{
+		position: absolute;
+		font-size: 20pt;
+		font-weight: bold;
+		top: 0px;
+		right: 0px;
+		height: 90px;
+		width: 200px;
+		padding: 10px;
+	}
+
+	#message
+	{
+		padding: 10px;
+		position: absolute;
+		top: 120px;
+		right: 0px;
+		height: 15px;
+		font-size: 10pt;
+		font-weight: bold;
+	}
+
 
 	/* MAP CLASSES */
 	.ground {color: #777;}
@@ -53,12 +76,18 @@
 <body>
 <div id="dungeon" class="cnt_overlay"></div>
 <div id="values"></div>
+<div id="message">Halli Hallo</div>
 <script>
 
 function print(dg,player)
 {
 	$("#dungeon").html(dg.print(player));
 	$("#values").html(player.printValues());
+	if(getMessage()!="")
+	{
+		$("#message").html(getMessage());
+		log(getMessage());
+	}
 }
 
 function main()
