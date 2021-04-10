@@ -153,9 +153,20 @@ var DungeonMonster = function()
 {
 	var me=this;
 	this.health=5;
+	this.maxhealth=5;
+	this.attack=1;
 	this.posX=0;
 	this.posY=0;
 	this.type="MieserKadser";
+	this.addHealth=function(value)
+	{
+		me.health+=value;
+		if(me.health<0)
+			me.health=0;
+		if(me.health>me.maxhealth)
+			me.health=me.maxhealth;
+	}
+
 	this.move=function(dungeon, player)
 	{
 /*		var path=AStar(me.posX, me.posY, player.getPosition().x, player.getPosition().y, dungeon);
@@ -169,25 +180,47 @@ var DungeonMonster = function()
 		var moved = false;
 		var oldx=this.posX;
 		var oldy=this.posY;
-		if(player.getPosition().y>this.posY && dungeon.isWalkable(this.posX, this.posY+1) && dungeon.hasMonster(this.posX, this.posY+1)==false)
+		if(player.getPosition().y>me.posY && dungeon.isWalkable(me.posX, me.posY+1) && dungeon.hasMonster(me.posX, me.posY+1)==false)
 		{
-			this.posY+=1;
+			me.posY+=1;
 			moved = true;
 		}
-		if(moved==false && player.getPosition().y<this.posY && dungeon.isWalkable(this.posX, this.posY-1)  && dungeon.hasMonster(this.posX, this.posY-1)==false)
+		if(moved==false && player.getPosition().y<me.posY && dungeon.isWalkable(me.posX, me.posY-1)  && dungeon.hasMonster(me.posX, me.posY-1)==false)
 		{
-			this.posY-=1;
+			me.posY-=1;
 			moved = true;
 		}
-		if(moved==false && player.getPosition().x<this.posX && dungeon.isWalkable(this.posX-1, this.posY) && dungeon.hasMonster(this.posX-1, this.posY)==false)
+		if(moved==false && player.getPosition().x<me.posX && dungeon.isWalkable(me.posX-1, me.posY) && dungeon.hasMonster(me.posX-1, me.posY)==false)
 		{
-			this.posX-=1;
+			me.posX-=1;
 			moved = true;
 		}
-		if(moved==false && player.getPosition().x>this.posX && dungeon.isWalkable(this.posX+1, this.posY) && dungeon.hasMonster(this.posX+1, this.posY)==false)
+		if(moved==false && player.getPosition().x>me.posX && dungeon.isWalkable(me.posX+1, me.posY) && dungeon.hasMonster(me.posX+1, this.posY)==false)
 		{
-			this.posX+=1;
+			me.posX+=1;
 		}
+
+		// check if position is player position
+		if(me.posX==player.getPosition().x && me.posY==player.getPosition().y)
+		{
+			me.fight(player);
+			if(player.getHealth>=0)
+			{
+				me.posX=oldx;
+				me.posY=oldy;
+			}
+		}
+	}
+
+	// fight a player
+	// return true if player is death.
+	this.fight=function(player)
+	{
+		var atk=parseInt(Math.random(me.attack))+1;
+		player.addHealth(-atk);
+		var patk=player.getATK();
+		me.addHealth(-patk);
+		setMessage(me.type+" attacks: -"+atk+" HP<br />You attack: -"+patk+" HP");
 	}
 }
 
@@ -283,12 +316,17 @@ var DungeonGenerator = function()
 	this.moveMonsters=function(player)
 	{
 //		log("MM Player: "+player.posX+" "+player.posY);
+		var cp=Array();
 		for(var m=0;m<m_monsters.length;m++)
 		{
 		//	log("MOVING MONSTER #"+m);
 			var monster = m_monsters[m];
 			monster.move(me, player);
+			// remove monsters with health<=0
+			if(monster.health>0)
+				cp.push(monster);
 		}
+		m_monsters=cp;
 	}
 
 	// check if at this position is a monster.

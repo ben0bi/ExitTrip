@@ -58,7 +58,7 @@
 		position: absolute;
 		top: 120px;
 		right: 0px;
-		height: 15px;
+		min-height: 15px;
 		font-size: 10pt;
 		font-weight: bold;
 	}
@@ -123,6 +123,16 @@ function main()
 			case 39: player.move(3, dg); break;
 			case 40: player.move(4, dg); break;
 			default: break;
+		}
+		// create new if died.
+		if(player.getHealth()<=0)
+		{
+			dg.setProperties(props);
+			dg.generate();
+			setMessage("YOU DIED!");
+			player=new Player();
+			player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
+			player.move(0,dg);
 		}
 		print(dg,player)
 	};

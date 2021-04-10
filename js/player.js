@@ -21,9 +21,12 @@ var Player = function()
     var m_posX = 0;
     var m_posY = 0;
     var m_sight = 2;
+    var m_attack=2;
     var m_health = 15;
     var m_maxHealth = 15;
     var m_coins=0; // credits.
+
+    this.getATK=function() {return parseInt(Math.random()*m_attack)+1;}
 
     this.setPosition=function(posX, posY)
     {
@@ -37,6 +40,18 @@ var Player = function()
         var pos={x:m_posX,y:m_posY};
         return pos;
     }
+
+    // add some health to our health
+    this.addHealth=function(value)
+    {
+        m_health+=value;
+        if(m_health>m_maxHealth)
+            m_health=m_maxHealth;
+        if(m_health<0)
+            m_health=0;
+    }
+
+    this.getHealth=function() {return m_health;}
 
     // show some player values.
     this.printValues=function()
@@ -120,6 +135,7 @@ var Player = function()
         _showview(dungeon);
     }
 
+    // set tiles visible around the player.
     var _showview=function(dungeon)
     {
         for(var x=-m_sight;x<=m_sight;x++)
