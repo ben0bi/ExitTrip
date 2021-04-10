@@ -10,14 +10,14 @@
 	^	:	upwards (next dungeon)
 
 	// --> The generator also acts as actual dungeon.
-	// Get Stuff with: getItems, getMonsters, getRoomProperties, getMap, getMessage
+	// Get Stuff with: getItems, getMonsters, getRoomProperties, getMap(x,y), getMessage
 */
 
 // a map item
 var DungeonMapItem = function(itemTypeChar)
 {
 	this.type=itemTypeChar;
-	this.visible=false;  // SET THIS TO TRUE TO SEE THE WHOLE MAP <---
+	this.visible=false;  						// SET THIS TO TRUE TO SEE THE WHOLE MAP <---
 }
 
 // a pickable item
@@ -29,14 +29,166 @@ var DungeonItem = function()
 	this.amount = 10;
 }
 
+// search a path from x1, y1 to x2, y2 and return its path.
+// With path=AStar(x1,y1,x2,y2, dungeongenerator)
+// path[0] is the start point, path[1] is the first step (!)
+/*var AStarNode=function(x,y,previous)
+{
+	this.posX=x;
+	this.posY=y;
+	this.previous=previous;
+}
+var AStar = function(x1,y1,x2,y2,dungeon)
+{
+	this.path=Array();
+	var openlist = Array();
+	var closedlist=Array();
+	var startPoint=new AStarNode(x1,y1,null);
+	var done = false;
+	var found = false;
+	log("AStar begins "+x1+" "+y1+" --> "+x2+" "+y2);
+	openlist.push(startPoint);
+
+	var isInClosedList = function(listitem)
+	{
+		for(var i=0;i<closedlist.length;i++)
+		{
+			var c=closedlist[i];
+			if(listitem.posX==c.posX && listitem.posY==c.posY)
+				return true;
+		}
+		log(""+listitem.posX+" "+listitem.posY+" is NOT in closed list.");
+		return false;
+	}
+
+	var step=0;
+	while(!done)
+	{
+		step+=1;
+		// get the first entry from openlist and remove it.
+		var newopenlist=Array();
+		var open=null;
+		for(var i=0;i<openlist.length;i++)
+		{
+			if(i==0)
+			{
+				open=openlist[i];
+			}else{
+				newopenlist.push[open];
+			}
+		}
+		openlist=newopenlist;
+		// check if list is done.
+		if(open==null)
+		{
+			log("Open is null.");
+			done=true;
+		}else{
+			// else push that item into closed list.
+			closedlist.push(open);
+			log("open "+open.posX+" "+open.posY+" ("+x2+" "+y2+")");
+			// check if open is the end point.
+			if(open.posX==x2 && open.posY==y2)
+			{
+				log("AStar found a path.")
+				found = open;
+				done=true;
+				break;
+			}
+
+			// now get all directions into open list.
+			// needs the function isWalkable in dungeon.
+			var listitem=null;
+			if(dungeon.isWalkable(open.posX-1, open.posY))
+			{
+				listitem=new AStarNode(open.posX-1, open.posY, open);
+				if(!isInClosedList(listitem))
+					openlist.push(listitem)
+			}
+			if(dungeon.isWalkable(open.posX, open.posY-1))
+			{
+				listitem=new AStarNode(open.posX, open.posY-1, open);
+				if(!isInClosedList(listitem))
+					openlist.push(listitem)
+			}
+			if(dungeon.isWalkable(open.posX+1, open.posY))
+			{
+				listitem=new AStarNode(open.posX+1, open.posY, open);
+				if(!isInClosedList(listitem))
+					openlist.push(listitem)
+			}
+			if(dungeon.isWalkable(open.posX, open.posY+1))
+			{
+				listitem=new AStarNode(open.posX, open.posY+1, open);
+				if(!isInClosedList(listitem))
+					openlist.push(listitem)
+			}
+		}
+	}
+	// a path was found.
+	var preversed=Array();
+	if(found!=false)
+	{
+		while(found!=null)
+		{
+			preversed.push(found);
+			found=found.previous;
+		}
+	}else{
+		log("AStar did not find a path, sorry.")
+	}
+	// reverse the path.
+	for(var i=preversed.length-1;i>=0;i--)
+	{
+		var o=preversed[i];
+		log("AStar push "+o.posX+" "+o.posY);
+		this.path.push(o);
+	}
+	return this.path;
+}
+*/
+
 // a dungeon monster
 var DungeonMonster = function()
 {
+	var me=this;
 	this.health=5;
 	this.posX=0;
 	this.posY=0;
 	this.type="MieserKadser";
-
+	this.move=function(dungeon, player)
+	{
+/*		var path=AStar(me.posX, me.posY, player.getPosition().x, player.getPosition().y, dungeon);
+		if(path.lenght>1)
+		{
+			me.posX=path[1].posX;
+			me.posY=path[1].posY;
+		}
+		*/
+		// very simple move algorithmus.
+		var moved = false;
+		var oldx=this.posX;
+		var oldy=this.posY;
+		if(player.getPosition().y>this.posY && dungeon.isWalkable(this.posX, this.posY+1) && dungeon.hasMonster(this.posX, this.posY+1)==false)
+		{
+			this.posY+=1;
+			moved = true;
+		}
+		if(moved==false && player.getPosition().y<this.posY && dungeon.isWalkable(this.posX, this.posY-1)  && dungeon.hasMonster(this.posX, this.posY-1)==false)
+		{
+			this.posY-=1;
+			moved = true;
+		}
+		if(moved==false && player.getPosition().x<this.posX && dungeon.isWalkable(this.posX-1, this.posY) && dungeon.hasMonster(this.posX-1, this.posY)==false)
+		{
+			this.posX-=1;
+			moved = true;
+		}
+		if(moved==false && player.getPosition().x>this.posX && dungeon.isWalkable(this.posX+1, this.posY) && dungeon.hasMonster(this.posX+1, this.posY)==false)
+		{
+			this.posX+=1;
+		}
+	}
 }
 
 // a generated room, before it is in the map.
@@ -108,18 +260,13 @@ var DungeonGenerator = function()
 	var m_rooms=Array();
 
 	// the actual map.
-	var m_map = Array();
+	var m_map = new Array();
 
 	// the items on the map.
 	var m_items = Array();
 
 	// the monsters on the map.
 	var m_monsters = Array();
-
-	// the message
-	var m_message = "";
-	this.setMessage=function(text) {m_message=text;}
-	this.getMessage=function() {return m_message;}
 
 	// get the player start position on the map.
 	// pos.x, pos.y
@@ -130,6 +277,30 @@ var DungeonGenerator = function()
 			y: playerStartY
 		}
 		return pos;
+	}
+	
+	// move all monsters towards the player for one step.
+	this.moveMonsters=function(player)
+	{
+//		log("MM Player: "+player.posX+" "+player.posY);
+		for(var m=0;m<m_monsters.length;m++)
+		{
+		//	log("MOVING MONSTER #"+m);
+			var monster = m_monsters[m];
+			monster.move(me, player);
+		}
+	}
+
+	// check if at this position is a monster.
+	this.hasMonster=function(x,y)
+	{
+		for(var i=0;i<m_monsters.length;i++)
+		{
+			var m=m_monsters[i];
+			if(m.posX==x && m.posY==y)
+				return m;
+		}
+		return false;
 	}
 
 	this.getItems=function() {return m_items;}
@@ -200,8 +371,8 @@ var DungeonGenerator = function()
 			}
 			m_rooms.push(room);
 		}
-		log("2. Reposition Rooms");
 
+		log("2. Reposition Rooms");
 		done=false;
 		steps=0;
 		while(done==false)

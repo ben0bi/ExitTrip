@@ -108,7 +108,7 @@ function main()
 
 	var player = new Player();
 	player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
-	player.move(0,dg);
+	player.move(0,dg); // show some tiles.
 
 	print(dg, player);
 	document.onkeydown = function(evt)
@@ -122,6 +122,7 @@ function main()
 			case 38: player.move(2, dg); break;
 			case 39: player.move(3, dg); break;
 			case 40: player.move(4, dg); break;
+			default: break;
 		}
 		print(dg,player)
 	};

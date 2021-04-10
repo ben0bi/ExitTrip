@@ -17,6 +17,7 @@ var getMessage=function() {return g_message;}
 
 var Player = function()
 {
+    var me=this;
     var m_posX = 0;
     var m_posY = 0;
     var m_sight = 2;
@@ -68,8 +69,9 @@ var Player = function()
             case 4: // down
                 if(dungeon.isWalkable(m_posX, m_posY+1))
                     m_posY+=1;
-                break;   
+                break;
         }
+        dungeon.moveMonsters(me);
 
         // check if the player can pick up some items.
         if(dungeon.checkForItem(m_posX,m_posY)==true)
