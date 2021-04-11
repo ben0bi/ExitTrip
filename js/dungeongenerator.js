@@ -181,31 +181,9 @@ var DungeonMonster = function()
 		// maybe move away from the player (by setting old x).
 		var oldx=me.posX;
 		var oldy=me.posY;
-/*		if(me.posX==player.getPosition().x && me.posY==player.getPosition().y)
-		{
-			if(dungeon.isWalkable(me.posX, me.posY+1))
-			{
-				moved=true;
-				oldy=me.posY+1;
-			}
-			if(moved==false && dungeon.isWalkable(me.posX, me.posY-1))
-			{
-				moved=true;
-				oldy=me.posY-1;
-			}
-			if(moved==false && dungeon.isWalkable(me.posX+1, me.posY))
-			{
-				moved=true;
-				oldx=me.posX+1;
-			}
-			if(moved==false && dungeon.isWalkable(me.posX-1, me.posY))
-			{
-				oldx=me.posX-1;
-			}
-		}
-*/
+
 		moved=false;
-		// now move towards the player.
+		// move towards the player.
 		if(player.getPosition().y>me.posY && dungeon.isWalkable(me.posX, me.posY+1) && dungeon.hasMonster(me.posX, me.posY+1)==false)
 		{
 			me.posY+=1;
@@ -240,7 +218,8 @@ var DungeonMonster = function()
 	}
 
 	// fight a player
-	// return true if player is death.
+	// player proofs for death himself.
+	// TODO: Roleplay-like fighting system.
 	this.fight=function(player)
 	{
 		var atk=parseInt(Math.random(me.attack))+1;
@@ -322,6 +301,12 @@ var DungeonGenerator = function()
 
 	var playerStartX = 0;
 	var playerStartY = 0;
+
+	// percentages
+	var m_itempercentage = 50;
+	var m_anotheritempercentage = 50;
+	var m_monsterpercentage = 30;
+	var m_anothermonsterpercentage = 30;
 
 	// the room properties.
 	var m_rooms=Array();
@@ -416,6 +401,15 @@ var DungeonGenerator = function()
 			m_maxRoomX=props.maxroomx;
 		if('maxroomy' in props)
 			m_maxRoomY=props.maxroomy;
+		if('monsterpercentage' in props)
+			m_monsterpercentage=props.monsterpercentage;
+		if('anothermonsterpercentage' in props)
+			m_anothermonsterpercentage=props.anothermonsterpercentage;
+		if('itempercentage' in props)
+			m_itempercentage=props.itempercentage;
+		if('anotheritempercentage' in props)
+			m_anotheritempercentage=props.anotheritempercentage;
+
 	}
 
 	// generate a dungeon with the given properties.
@@ -557,12 +551,6 @@ var DungeonGenerator = function()
 		this.setMap(room.posX+parseInt(Math.random()*room.width), room.posY+parseInt(Math.random()*room.height),'^');
 
 		log("7. create items and monsters")
-		var itempercentage=50;
-		var anotheritempercentage=50;
-
-		var monsterpercentage=30;
-		var anothermonsterpercentage=30;
-
 		m_items = Array();
 		m_monsters=Array();
 		for(var r=0;r<m_rooms.length;r++)
@@ -578,7 +566,7 @@ var DungeonGenerator = function()
 					// itempercentage
 					// anotheritempercentage
 				// place the item or not?
-				if(place<=itempercentage)
+				if(place<=m_itempercentage)
 				{
 					var item = new DungeonItem();
 
@@ -600,7 +588,7 @@ var DungeonGenerator = function()
 				}
 				// maybe place another item?
 				var place=Math.random()*100;
-				if(place<=anotheritempercentage)
+				if(place<=m_anotheritempercentage)
 					done = false;
 			}
 
@@ -614,13 +602,8 @@ var DungeonGenerator = function()
 			{
 				done = true;
 				var place=Math.random()*100;
-				// TODO: globalize that
-					// itempercentage
-					// anotheritempercentage
-					// monsterpercentage
-					// anothermonsterpercentage
 				// place the item or not?
-				if(place<=monsterpercentage)
+				if(place<=m_monsterpercentage)
 				{
 					var monster = new DungeonMonster();
 					monster.posX = room.posX+parseInt(Math.random()*room.width);
@@ -629,7 +612,7 @@ var DungeonGenerator = function()
 				}
 				// maybe place another item?
 				var place=Math.random()*100;
-				if(place<=anothermonsterpercentage)
+				if(place<=m_anothermonsterpercentage)
 					done = false;
 			}
 		}
