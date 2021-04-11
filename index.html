@@ -129,10 +129,10 @@ function main()
 		{
 			dg.setProperties(props);
 			dg.generate();
-			setMessage("YOU DIED!");
 			player=new Player();
 			player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
 			player.move(0,dg);
+			setMessage("YOU DIED!<br />Welcome to your new life.");
 		}
 		print(dg,player)
 	};

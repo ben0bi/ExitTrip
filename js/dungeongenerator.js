@@ -300,6 +300,7 @@ var DungeonGenerator = function()
 
 	// the monsters on the map.
 	var m_monsters = Array();
+	this.getMonsters=function() {return m_monsters;};
 
 	// get the player start position on the map.
 	// pos.x, pos.y

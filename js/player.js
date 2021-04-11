@@ -66,6 +66,8 @@ var Player = function()
     this.move=function(direction, dungeon)
     {
         setMessage("");
+        var oldx=m_posX;
+        var oldy=m_posY;
         switch(direction)
         {
             case 0: break; // used to call showview.
@@ -86,6 +88,23 @@ var Player = function()
                     m_posY+=1;
                 break;
         }
+
+        // check if there is a monster.
+        // they will attack you themselves
+        // so you don't have to.
+        var monsters = dungeon.getMonsters();
+        for(var i=0;i<monsters.length;i++)
+        {
+            var monster=monsters[i];
+            if(monster.posX==m_posX && monster.posY==m_posY)
+            {
+                log("MONSTERPOSITION");
+                m_posX=oldx;
+                m_posY=oldy;
+            }
+        }
+
+        // NPC turn.
         dungeon.moveMonsters(me);
 
         // check if the player can pick up some items.
