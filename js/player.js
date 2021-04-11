@@ -142,28 +142,50 @@ var Player = function()
 
         // check if a new dungeon has to be created.
         var mt=dungeon.getMap(m_posX, m_posY);
-        if(mt=='^')
+        if(mt=='v') // go back down.
         {
-            var rooms = dungeon.getRoomProps();
-            var lastroom = rooms[rooms.length-1];
-            setMessage("You go one chapter upwards.");
-            var props = {
-                floornumber: dungeon.getFloorNumber()+1,
-                initialx: lastroom.posX,
-                initialy: lastroom.posY,
-                initialwidth: lastroom.width,
-                initialheight: lastroom.height,
-				roomcount: 15,
-				mapsizex: 100,
-				mapsizey: 40,
-				minroomx: 3,
-				minroomy: 3,
-				maxroomx: 10,
-				maxroomy: 10
+            if(dungeon.previousDungeon!=null)
+            {
+                setMessage("You go one chapter downwards.");
+                dungeon = dungeon.previousDungeon;
             }
-            dungeon.setProperties(props);
-            dungeon.generate();
-            dungeon.setMap(m_posX, m_posY, 'v');
+        }
+
+        if(mt=='^') // UPwards = downwards in normal roguelikes.
+        {
+            setMessage("You go one chapter upwards.");
+            if(dungeon.nextDungeon==null)
+            {
+                log("> Generating new floor.")
+                var rooms = dungeon.getRoomProps();
+                var lastroom = rooms[rooms.length-1];
+                var props = {
+                    floornumber: dungeon.getFloorNumber()+1,
+                    initialx: lastroom.posX,
+                    initialy: lastroom.posY,
+                    initialwidth: lastroom.width,
+                    initialheight: lastroom.height,
+			    	roomcount: 15,
+				    mapsizex: 100,
+    				mapsizey: 40,
+	    			minroomx: 3,
+		    		minroomy: 3,
+			    	maxroomx: 10,
+				    maxroomy: 10
+                }
+                var olddungeon = dungeon;
+
+                dungeon = new DungeonGenerator();
+                dungeon.previousDungeon=olddungeon;
+                olddungeon.nextDungeon=dungeon;
+
+                dungeon.setProperties(props);
+                dungeon.generate();
+                dungeon.setMap(m_posX, m_posY, 'v');
+            }else{
+                log("> Using already created floor.");
+                dungeon = dungeon.nextDungeon;
+            }
         }
         _showview(dungeon);
         return dungeon;
