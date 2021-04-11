@@ -178,8 +178,34 @@ var DungeonMonster = function()
 		*/
 		// very simple move algorithmus.
 		var moved = false;
-		var oldx=this.posX;
-		var oldy=this.posY;
+		// maybe move away from the player (by setting old x).
+		var oldx=me.posX;
+		var oldy=me.posY;
+/*		if(me.posX==player.getPosition().x && me.posY==player.getPosition().y)
+		{
+			if(dungeon.isWalkable(me.posX, me.posY+1))
+			{
+				moved=true;
+				oldy=me.posY+1;
+			}
+			if(moved==false && dungeon.isWalkable(me.posX, me.posY-1))
+			{
+				moved=true;
+				oldy=me.posY-1;
+			}
+			if(moved==false && dungeon.isWalkable(me.posX+1, me.posY))
+			{
+				moved=true;
+				oldx=me.posX+1;
+			}
+			if(moved==false && dungeon.isWalkable(me.posX-1, me.posY))
+			{
+				oldx=me.posX-1;
+			}
+		}
+*/
+		moved=false;
+		// now move towards the player.
 		if(player.getPosition().y>me.posY && dungeon.isWalkable(me.posX, me.posY+1) && dungeon.hasMonster(me.posX, me.posY+1)==false)
 		{
 			me.posY+=1;
@@ -200,11 +226,12 @@ var DungeonMonster = function()
 			me.posX+=1;
 		}
 
-		// check if position is player position
+		// check if position is player position.
+		// if it was before, it will now occupy the newly calculated oldx, oldy.
 		if(me.posX==player.getPosition().x && me.posY==player.getPosition().y)
 		{
 			me.fight(player);
-			if(player.getHealth>=0)
+			if(player.getHealth()>0)
 			{
 				me.posX=oldx;
 				me.posY=oldy;
