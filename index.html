@@ -47,7 +47,7 @@
 		font-weight: bold;
 		top: 0px;
 		right: 0px;
-		height: 90px;
+		height: 120px;
 		width: 200px;
 		padding: 10px;
 	}
@@ -56,7 +56,7 @@
 	{
 		padding: 10px;
 		position: absolute;
-		top: 120px;
+		top: 150px;
 		right: 0px;
 		min-height: 15px;
 		font-size: 10pt;
@@ -82,7 +82,7 @@
 function print(dg,player)
 {
 	$("#dungeon").html(dg.print(player));
-	$("#values").html(player.printValues());
+	$("#values").html(player.printValues(dg));
 	if(getMessage()!="")
 	{
 		$("#message").html(getMessage());
@@ -128,6 +128,7 @@ function main()
 		if(player.getHealth()<=0)
 		{
 			dg.setProperties(props);
+			dg.resetFloorNumber();
 			dg.generate();
 			player=new Player();
 			player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);

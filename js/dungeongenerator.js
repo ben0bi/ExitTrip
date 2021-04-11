@@ -268,6 +268,10 @@ var DungeonGenerator = function()
 {
 	var me = this;
 
+	var m_floorNumber = 0;
+	this.getFloorNumber=function() {return m_floorNumber;}
+	this.resetFloorNumber=function() {m_floorNumber=0;}
+
 	var m_roomCount = 15;
 
 	var m_mapSizeX = 100;
@@ -387,6 +391,7 @@ var DungeonGenerator = function()
 	// generate a dungeon with the given properties.
 	this.generate = function()
 	{
+		m_floorNumber++;
 		m_rooms = Array();
 		log("Generating Dungeon...");
 		log("1. Creating Rooms")
@@ -546,6 +551,17 @@ var DungeonGenerator = function()
 				if(place<=itempercentage)
 				{
 					var item = new DungeonItem();
+
+					// TODO: load from item list
+					var t= parseInt(Math.random()*2);
+					switch(t)
+					{
+						case 1:
+							item.type="health"
+							break;
+						default:
+							item.type="coin";
+					}
 					// TODO: change percentage by player level or such.
 					item.amount = parseInt(Math.random()*15)+1;
 					item.posX = room.posX+parseInt(Math.random()*room.width);
@@ -727,11 +743,14 @@ var DungeonGenerator = function()
 					{
 						switch(itm.type)
 						{
+							case 'health':
+								r="<b class='item'>+</b>";
+								break;
 							case 'coin':
-								r="<b class='item'>$</b>"
+								r="<b class='item'>$</b>";
 								break;
 							default:
-								r="<b class='item'>i</b>"
+								r="<b class='item'>?</b>";
 						}
 					}
 				}
@@ -743,9 +762,9 @@ var DungeonGenerator = function()
 					monster=m_monsters[mt];
 					if(monster.posX==x && monster.posY==y)
 					{
-						/*switch(itm.type)
+						/*switch(monster.type)
 						{
-							case 'coin':
+							case 'MieserKadser':
 								r="<b class='item'>$</b>"
 								break;
 							default:
@@ -754,7 +773,6 @@ var DungeonGenerator = function()
 						r="<b class='monster'>M</b>";
 					}
 				}
-
 
 				// maybe set player position.
 				if(x==player.getPosition().x && y==player.getPosition().y)

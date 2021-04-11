@@ -54,11 +54,12 @@ var Player = function()
     this.getHealth=function() {return m_health;}
 
     // show some player values.
-    this.printValues=function()
+    this.printValues=function(dungeon)
     {
         var html="";
         html+="&#9829; "+m_health+" / "+m_maxHealth+"<br />";
         html+="&#8353; "+m_coins+"<br />";
+        html+="F "+dungeon.getFloorNumber()+"<br />";
         html+="<small>&#128065; "+m_sight+"</small><br />";
         return html;
     }
@@ -98,7 +99,7 @@ var Player = function()
             var monster=monsters[i];
             if(monster.posX==m_posX && monster.posY==m_posY)
             {
-                log("MONSTERPOSITION");
+               // log("MONSTERPOSITION");
                 m_posX=oldx;
                 m_posY=oldy;
             }
@@ -120,6 +121,10 @@ var Player = function()
                     // what item is it?
                     switch(item.type)
                     {
+                        case "health":
+                            setMessage("You pick up some root beer.<br />Heals "+item.amount+" HP");
+                            me.addHealth(item.amount);
+                            break;
                         case "coin":
                             setMessage("You pick up "+item.amount+" CryptoBenis.");
                             m_coins+=item.amount;
