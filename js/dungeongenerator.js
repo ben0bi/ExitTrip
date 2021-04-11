@@ -8,6 +8,7 @@
 		:	(space) nothing
 	#	:	wall
 	^	:	upwards (next dungeon)
+	v	:	downwards (previous dungeon)
 
 	// --> The generator also acts as actual dungeon.
 	// Get Stuff with: getItems, getMonsters, getRoomProperties, getMap(x,y), getMessage
@@ -379,6 +380,8 @@ var DungeonGenerator = function()
 	// set some properties BEFORE you call generate.
 	this.setProperties =function(props)
 	{
+		if('floornumber' in props)
+			m_floorNumber = props.floornumber;
 		if('initialx' in props)
 			m_initialX=props.initialx;
 		if('initialy' in props)
@@ -409,13 +412,11 @@ var DungeonGenerator = function()
 			m_itempercentage=props.itempercentage;
 		if('anotheritempercentage' in props)
 			m_anotheritempercentage=props.anotheritempercentage;
-
 	}
 
 	// generate a dungeon with the given properties.
 	this.generate = function()
 	{
-		m_floorNumber++;
 		m_rooms = Array();
 		log("Generating Dungeon...");
 		log("1. Creating Rooms")
@@ -669,6 +670,7 @@ var DungeonGenerator = function()
 		{
 			case '.':
 			case '^':
+			case 'v':
 				return true;
 				break;
 			default:
@@ -743,6 +745,7 @@ var DungeonGenerator = function()
 					case '#': r="&#9608;";break;
 					case '.': r="<b class='ground'>.</b>";break;
 					case '^': r="<b class='stairs'>O</b>";break;
+					case 'v': r="<b class='stairs'>V</b>";break;
 					default:
 						break;
 				}

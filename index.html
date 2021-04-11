@@ -119,19 +119,19 @@ function main()
 		// get arrow keys and other special characters.
 		switch(charCode)
 		{
-			case 37: player.move(1, dg); break;
-			case 38: player.move(2, dg); break;
-			case 39: player.move(3, dg); break;
-			case 40: player.move(4, dg); break;
+			case 37: dg=player.move(1, dg); break;
+			case 38: dg=player.move(2, dg); break;
+			case 39: dg=player.move(3, dg); break;
+			case 40: dg=player.move(4, dg); break;
 			default: break;
 		}
 		var charStr = String.fromCharCode(charCode);
 		switch(charStr.toLowerCase())
 		{
-			case 'a': player.move(1,dg);break;
-			case 'w': player.move(2,dg);break;
-			case 'd': player.move(3,dg);break;
-			case 's': player.move(4,dg);break;
+			case 'a': dg=player.move(1,dg);break;
+			case 'w': dg=player.move(2,dg);break;
+			case 'd': dg=player.move(3,dg);break;
+			case 's': dg=player.move(4,dg);break;
 		}
 		// create new if died.
 		if(player.getHealth()<=0)

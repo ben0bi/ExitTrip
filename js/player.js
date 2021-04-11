@@ -148,15 +148,25 @@ var Player = function()
             var lastroom = rooms[rooms.length-1];
             setMessage("You go one chapter upwards.");
             var props = {
+                floornumber: dungeon.getFloorNumber()+1,
                 initialx: lastroom.posX,
                 initialy: lastroom.posY,
                 initialwidth: lastroom.width,
-                initialheight: lastroom.height
+                initialheight: lastroom.height,
+				roomcount: 15,
+				mapsizex: 100,
+				mapsizey: 40,
+				minroomx: 3,
+				minroomy: 3,
+				maxroomx: 10,
+				maxroomy: 10
             }
             dungeon.setProperties(props);
             dungeon.generate();
+            dungeon.setMap(m_posX, m_posY, 'v');
         }
         _showview(dungeon);
+        return dungeon;
     }
 
     // set tiles visible around the player.
