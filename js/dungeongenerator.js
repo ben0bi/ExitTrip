@@ -729,7 +729,7 @@ var DungeonGenerator = function()
 					case ' ': r="&#9617;";break;
 					case '#': r="&#9608;";break;
 					case '.': r="<b class='ground'>.</b>";break;
-					case '^': r="<b class='stairs'>^</b>";break;
+					case '^': r="<b class='stairs'>O</b>";break;
 					default:
 						break;
 				}
