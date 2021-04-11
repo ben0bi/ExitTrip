@@ -57,7 +57,7 @@ var Player = function()
     this.printValues=function(dungeon)
     {
         var html="";
-        html+="&#9829; "+m_health+" / "+m_maxHealth+"<br />";
+        html+="&hearts; "+m_health+" / "+m_maxHealth+"<br />";
         html+="&#8353; "+m_coins+"<br />";
         html+="F "+dungeon.getFloorNumber()+"<br />";
         html+="<small>&#128065; "+m_sight+"</small><br />";

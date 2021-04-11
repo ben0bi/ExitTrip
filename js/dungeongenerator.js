@@ -220,7 +220,10 @@ var DungeonMonster = function()
 		player.addHealth(-atk);
 		var patk=player.getATK();
 		me.addHealth(-patk);
-		setMessage(me.type+" attacks: -"+atk+" HP<br />You attack: -"+patk+" HP");
+		var msg=me.type+" attacks: -"+atk+" HP<br />You attack: -"+patk+" HP<br />";
+		if(me.health<=0)
+			msg+=me.type+" has died.";
+		setMessage(msg);
 	}
 }
 
@@ -744,7 +747,7 @@ var DungeonGenerator = function()
 						switch(itm.type)
 						{
 							case 'health':
-								r="<b class='item'>+</b>";
+								r="<b class='item'>&hearts;</b>";
 								break;
 							case 'coin':
 								r="<b class='item'>$</b>";
