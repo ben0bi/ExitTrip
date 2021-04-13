@@ -26,6 +26,29 @@ var Player = function()
     var m_maxHealth = 15;
     var m_coins=0; // credits.
 
+    this.loadCookies=function()
+    {
+        if(getCookie("et_playersight")!=null)
+            m_sight=parseInt(getCookie("et_playersight"));
+        if(getCookie("et_playerattack")!=null)
+            m_attack=parseInt(getCookie("et_playerattack"));
+        if(getCookie("et_playerhealth")!=null)
+            m_health=parseInt(getCookie("et_playerhealth"));
+        if(getCookie("et_playermaxhealth")!=null)
+            m_maxHealth=parseInt(getCookie("et_playermaxhealth"));
+        if(getCookie("et_playercoins")!=null)
+            m_coins=parseInt(getCookie("et_playercoins"));
+    }
+
+    this.saveCookies=function()
+    {
+        setCookie("et_playersight",m_sight.toString(),180);
+        setCookie("et_playerattack", m_attack.toString(),180);
+        setCookie("et_playerhealth", m_health.toString(),180);
+        setCookie("et_playermaxhealth", m_maxHealth.toString(),180);
+        setCookie("et_playercoins", m_coins.toString(),180);
+    }
+
     this.getATK=function() {return parseInt(Math.random()*m_attack)+1;}
 
     this.setPosition=function(posX, posY)
@@ -187,6 +210,13 @@ var Player = function()
                 dungeon = dungeon.nextDungeon;
             }
         }
+
+        // finally save the player stats to cookies.
+        // on reload, a new floor is created but the
+        // old player stats will be loaded.
+        this.saveCookies();
+        setCookie("et_actualfloor", dungeon.getFloorNumber().toString());
+
         _showview(dungeon);
         return dungeon;
     }

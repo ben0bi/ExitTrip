@@ -93,7 +93,14 @@ function print(dg,player)
 function main()
 {
 	log("MAIN");
+	var actualFloor=null;
+	var actualFloor=getCookie("et_actualfloor");
+	if(actualFloor!=null)
+		actualFloor=parseInt(actualFloor)
+	else
+		actualFloor=0;
 	var props = {
+		floornumber: actualFloor,
 		roomcount: 15,
 		mapsizex: 100,
 		mapsizey: 40,
@@ -107,6 +114,7 @@ function main()
 	dg.generate();
 
 	var player = new Player();
+	player.loadCookies();
 	player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
 	player.move(0,dg); // show some tiles.
 
@@ -133,12 +141,15 @@ function main()
 			case 'd': dg=player.move(3,dg);break;
 			case 's': dg=player.move(4,dg);break;
 		}
+
 		// create new if died.
 		if(player.getHealth()<=0)
 		{
 			dg.setProperties(props);
 			dg.resetFloorNumber();
 			dg.generate();
+			dg.previousDungeon = null;
+			dg.nextDungeon = null;
 			player=new Player();
 			player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
 			player.move(0,dg);

@@ -1,6 +1,9 @@
 {  
    "//": "EXTERNAL LIBS",     
    "JQUERY": "js/extlibs/jquery-3.6.0.min.js",
+
+   "//": "Save and Load cookies. Player.js uses that.",
+   "COOKIES": "js/extlibs/cookies.js",
    
    "//": "Logging",
    "LOG": "js/log.js",

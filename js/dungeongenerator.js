@@ -282,6 +282,7 @@ var DungeonGenerator = function()
 {
 	var me = this;
 
+	// the dungeon handles its list itself.
 	this.nextDungeon = null;
 	this.previousDungeon = null;
 
