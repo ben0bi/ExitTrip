@@ -93,12 +93,15 @@ function print(dg,player)
 function main()
 {
 	log("MAIN");
+	// maybe get another actual floor.
 	var actualFloor=null;
 	var actualFloor=getCookie("et_actualfloor");
 	if(actualFloor!=null)
 		actualFloor=parseInt(actualFloor)
 	else
 		actualFloor=0;
+		
+	// the startup properties for the dungeon.
 	var props = {
 		floornumber: actualFloor,
 		roomcount: 15,

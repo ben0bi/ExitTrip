@@ -27,6 +27,7 @@ var DungeonItem = function()
 	this.posX = 0;
 	this.posY = 0;
 	this.type="coin";
+	this.mapchar="!";
 	this.amount = 10;
 }
 
@@ -154,6 +155,7 @@ var DungeonMonster = function()
 {
 	var me=this;
 	this.health=5;
+	this.mapchar="M";
 	this.maxhealth=5;
 	this.attack=1;
 	this.posX=0;
@@ -585,9 +587,12 @@ var DungeonGenerator = function()
 					{
 						case 1:
 							item.type="health"
+							item.mapchar="&hearts;"
 							break;
 						default:
-							item.type="coin";
+							item.type="coin"
+							item.mapchar="$";
+							break;
 					}
 					// TODO: change percentage by player level or such.
 					item.amount = parseInt(Math.random()*15)+1;
@@ -615,6 +620,7 @@ var DungeonGenerator = function()
 				if(place<=m_monsterpercentage)
 				{
 					var monster = new DungeonMonster();
+					// TODO: load from list.
 					monster.posX = room.posX+parseInt(Math.random()*room.width);
 					monster.posY= room.posY+parseInt(Math.random()*room.height);
 					m_monsters.push(monster);
@@ -745,6 +751,7 @@ var DungeonGenerator = function()
 					continue;
 				}
 
+				// select the proper character and color.
 				switch(t)
 				{
 					case '<': r="&lt;";break;
@@ -765,17 +772,7 @@ var DungeonGenerator = function()
 					itm=m_items[it];
 					if(itm.posX==x && itm.posY==y)
 					{
-						switch(itm.type)
-						{
-							case 'health':
-								r="<b class='item'>&hearts;</b>";
-								break;
-							case 'coin':
-								r="<b class='item'>$</b>";
-								break;
-							default:
-								r="<b class='item'>?</b>";
-						}
+						r="<b class='item'>"+itm.mapchar+"</b>";
 					}
 				}
 
@@ -786,15 +783,7 @@ var DungeonGenerator = function()
 					monster=m_monsters[mt];
 					if(monster.posX==x && monster.posY==y)
 					{
-						/*switch(monster.type)
-						{
-							case 'MieserKadser':
-								r="<b class='item'>$</b>"
-								break;
-							default:
-								r="<b class='item'>i</b>"
-						}*/
-						r="<b class='monster'>M</b>";
+						r="<b class='monster'>"+monster.mapchar+"</b>";
 					}
 				}
 
