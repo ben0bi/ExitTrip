@@ -4,81 +4,22 @@
 <title>Exit Trip</title>
 <meta charset="utf-8" />
 <script src="js/extlibs/ben0biJSLoader.js"></script>
-<style>
-	body, html
-	{
-		padding: 20;
-		margin: 0;
-		width: 100%;
-		height: 100%;
-		font-family: monospace;
-	}
-	#dungeon
-	{
-		background-color: rgb(51, 51, 51);
-		color: #9C6;
-		z-index: 0;
-	}
-	.cnt_overlay
-	{
-		position: absolute;
-		top: 0px;
-		left: 0px;
-		width: 100%;
-		height: 100%;
-		overflow: hidden;
-	}
-
-	#values, #message
-	{
-		position: absolute;
-		top: 0px;
-		right: 0px;
-		min-width: 300px;
-		font-family: monospace;
-		background-color: #3A3;
-		color: #000000;
-	}
-
-	#values
-	{
-		position: absolute;
-		font-size: 20pt;
-		font-weight: bold;
-		top: 0px;
-		right: 0px;
-		height: 120px;
-		width: 200px;
-		padding: 10px;
-	}
-
-	#message
-	{
-		padding: 10px;
-		position: absolute;
-		top: 150px;
-		right: 0px;
-		min-height: 15px;
-		font-size: 10pt;
-		font-weight: bold;
-	}
-
-
-	/* MAP CLASSES */
-	.ground {color: #777;}
-	.player {color: #FF3;font-weight: bolder;}
-	.stairs {color: rgb(219, 205, 0);}
-	.item {color: #69A;}
-	.monster {color: #F33;}
-
-</style>
+<link rel="stylesheet" type="text/css" href="css/css.css" />
+<link rel="stylesheet" type="text/css" href="js/extlibs/jdoor/jdoor.css" />
+<link rel="stylesheet" type="text/css" href="js/extlibs/jdoor/themes/green.css" />
 </head>
 <body>
 <div id="dungeon" class="cnt_overlay"></div>
 <div id="values"></div>
 <div id="message">Halli Hallo</div>
+<div id="windows" class="cnt_overlay"></div>
+<div id="buttons">
+	<center>
+		<a onclick="showShop();" class="rightbutton">Le Shopé</a>
+	</center>
+</div>
 <script>
-
+	
 function print(dg,player)
 {
 	$("#dungeon").html(dg.print(player));
@@ -90,9 +31,25 @@ function print(dg,player)
 	}
 }
 
+function showShop() {log("Showshop");$('#shopwindow').jdShow();}
+
 function main()
 {
 	log("MAIN");
+
+	var window="<br /> Welcome to Exit Trip.<br /><br /><b class='item'>Blue stuff: good news</b><br />";
+	window+="<b class='monster'>Red stuff: bad news</b><br />";
+	window+"<b class='player'>Yellow @: your character</b><br />";
+	window+="<b class='stairs'>Yellow O and V: Upwards or downwards.</b><br />";
+	window+="<br />Use arrow keys to move and attack.<br />Press 'Le Shopé' button to buy stuff.<br />";
+	window+="Hide windows with the X button.";
+	$("#windows").jdCreateWindow("aboutwindow",100,100,300,170,"Welcome",window);
+
+	var shop="<br />Nothing to buy yet, sorry."
+	$("#windows").jdCreateWindow("shopwindow",30,30,400,300,"Le Shopé", shop);
+	$('#shopwindow').hide();
+
+
 	// maybe get another actual floor.
 	var actualFloor=null;
 	var actualFloor=getCookie("et_actualfloor");
@@ -100,7 +57,7 @@ function main()
 		actualFloor=parseInt(actualFloor)
 	else
 		actualFloor=0;
-		
+
 	// the startup properties for the dungeon.
 	var props = {
 		floornumber: actualFloor,

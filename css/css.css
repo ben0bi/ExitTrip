@@ -1,0 +1,93 @@
+body, html
+{
+    padding: 20;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    font-family: monospace;
+}
+#dungeon
+{
+    background-color: rgb(51, 51, 51);
+    color: #9C6;
+    z-index: 0;
+}
+.cnt_overlay
+{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#values, #message, #buttons
+{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    min-width: 300px;
+    font-family: monospace;
+    background-color: #3A3;
+    color: #000000;
+}
+
+#values
+{
+    position: absolute;
+    font-size: 20pt;
+    font-weight: bold;
+    top: 0px;
+    right: 0px;
+    height: 120px;
+    width: 200px;
+    padding: 10px;
+}
+
+#message
+{
+    padding: 10px;
+    position: absolute;
+    top: 200px;
+    right: 0px;
+    min-height: 15px;
+    font-size: 10pt;
+    font-weight: bold;
+}
+
+#buttons
+{
+    padding: 10px;
+    font-size: 20px;
+    top: 150px;
+    z-index: 101;
+}
+
+#windows
+{
+    z-index: 100;
+}
+
+.rightbutton
+{
+    width: 100%;
+    height: 20px;
+    padding: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #000;
+}
+.rightbutton:hover
+{
+    background-color: #000;
+    color: #3A3;
+    cursor: pointer;
+}
+
+/* MAP CLASSES */
+.ground {color: #777;}
+.player {color: #FF3;font-weight: bolder;}
+.stairs {color: rgb(219, 205, 0);}
+.item {color: #69A;}
+.monster {color: #F33;}
