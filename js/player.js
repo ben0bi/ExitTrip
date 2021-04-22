@@ -25,7 +25,53 @@ var Player = function()
     var m_health = 15;
     var m_maxHealth = 15;
     var m_coins=0; // credits.
+    var m_myfloornumber=0;
+    this.setFloorNumber=function(value) {m_myfloornumber=value;}
 
+    // show the shop window
+    this.showShop=function() 
+    {
+	    var html="<div class='shopbutton topbutton' onclick='g_player.buy(1);'>"+_getPrice(1)+"$: MindView &#128065;</div>";
+	    html+="<div class='shopbutton' onclick='g_player.buy(2);'>"+_getPrice(2)+"$: Attack</div>";
+	    html+="<div class='shopbutton' onclick='g_player.buy(3);'>"+_getPrice(3)+"$: 1 permanent &hearts;<br />+ Full Health</div>";
+	    $('#shopwindow').jdHTML(html);
+	    log("Showshop");
+	    $('#shopwindow').jdShow();
+    }
+
+    // get the price for an item
+    var _getPrice=function(which)
+    {
+        var value=0;
+        switch(which)
+        {
+            case 1: if(m_sight<5) value=(m_sight-1)*150;break;
+            case 2: if(m_attack<10) value=m_attack*50;break;
+            case 3: value=100;break;
+            default: break;
+        }
+        return value;
+    }
+
+    // buy something for the player
+    this.buy=function(which)
+    {
+        var price = _getPrice(which);
+        if(m_coins>=price)
+        {
+            m_coins-=price;
+            switch(which)
+            {
+                case 1: if(m_sight<5) m_sight+=1;break;
+                case 2: if(m_attack < 10) m_attack+=1;break;
+                case 3: m_maxHealth+=1;m_health=m_maxHealth;break;
+                default:
+                    break;
+            }
+        }
+        $("#values").html(this.printValues());
+    }
+    
     this.loadCookies=function()
     {
         if(getCookie("et_playersight")!=null)
@@ -38,6 +84,7 @@ var Player = function()
             m_maxHealth=parseInt(getCookie("et_playermaxhealth"));
         if(getCookie("et_playercoins")!=null)
             m_coins=parseInt(getCookie("et_playercoins"));
+        // et_actualfloor will get read somewhere else.
     }
 
     this.saveCookies=function()
@@ -47,6 +94,7 @@ var Player = function()
         setCookie("et_playerhealth", m_health.toString(),180);
         setCookie("et_playermaxhealth", m_maxHealth.toString(),180);
         setCookie("et_playercoins", m_coins.toString(),180);
+        setCookie("et_actualfloor", m_myfloornumber.toString());
     }
 
     this.getATK=function() {return parseInt(Math.random()*m_attack)+1;}
@@ -77,13 +125,13 @@ var Player = function()
     this.getHealth=function() {return m_health;}
 
     // show some player values.
-    this.printValues=function(dungeon)
+    this.printValues=function()
     {
         var html="";
         html+="&hearts; "+m_health+" / "+m_maxHealth+"<br />";
-        html+="&#8353; "+m_coins+"<br />";
-        html+="F "+dungeon.getFloorNumber()+"<br />";
-        html+="<small>&#128065; "+m_sight+"</small><br />";
+        html+="$ "+m_coins+"<br />";
+        html+="F "+m_myfloornumber+"<br />";
+        html+="<small>ATK "+m_attack+" &#128065; "+m_sight+"</small><br />";
         return html;
     }
 
@@ -214,8 +262,8 @@ var Player = function()
         // finally save the player stats to cookies.
         // on reload, a new floor is created but the
         // old player stats will be loaded.
+        m_myfloornumber=dungeon.getFloorNumber();
         this.saveCookies();
-        setCookie("et_actualfloor", dungeon.getFloorNumber().toString());
 
         _showview(dungeon);
         return dungeon;

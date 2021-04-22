@@ -15,23 +15,23 @@
 <div id="windows" class="cnt_overlay"></div>
 <div id="buttons">
 	<center>
-		<a onclick="showShop();" class="rightbutton">Le Shopé</a>
+		<div onclick="g_player.showShop();" class="rightbutton">Le Shopé</div>
 	</center>
 </div>
 <script>
-	
-function print(dg,player)
+var g_player;
+var g_dungeon;
+
+function print()
 {
-	$("#dungeon").html(dg.print(player));
-	$("#values").html(player.printValues(dg));
+	$("#dungeon").html(g_dungeon.print(g_player));
+	$("#values").html(g_player.printValues());
 	if(getMessage()!="")
 	{
 		$("#message").html(getMessage());
 		log(getMessage());
 	}
 }
-
-function showShop() {log("Showshop");$('#shopwindow').jdShow();}
 
 function main()
 {
@@ -46,9 +46,8 @@ function main()
 	$("#windows").jdCreateWindow("aboutwindow",100,100,300,170,"Welcome",window);
 
 	var shop="<br />Nothing to buy yet, sorry."
-	$("#windows").jdCreateWindow("shopwindow",30,30,400,300,"Le Shopé", shop);
+	$("#windows").jdCreateWindow("shopwindow",30,30,200,200,"Le Shopé", shop);
 	$('#shopwindow').hide();
-
 
 	// maybe get another actual floor.
 	var actualFloor=null;
@@ -69,16 +68,16 @@ function main()
 		maxroomx: 10,
 		maxroomy: 10
 	}
-	var dg = new DungeonGenerator();
-	dg.setProperties(props)
-	dg.generate();
+	g_dungeon = new DungeonGenerator();
+	g_dungeon.setProperties(props)
+	g_dungeon.generate();
 
-	var player = new Player();
-	player.loadCookies();
-	player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
-	player.move(0,dg); // show some tiles.
+	g_player = new Player();
+	g_player.loadCookies();
+	g_player.setPosition(g_dungeon.getPlayerStartPosition().x, g_dungeon.getPlayerStartPosition().y);
+	g_player.move(0,g_dungeon); // show some tiles.
 
-	print(dg, player);
+	print();
 	document.onkeydown = function(evt)
 	{
 		evt = evt || window.event;
@@ -87,35 +86,35 @@ function main()
 		// get arrow keys and other special characters.
 		switch(charCode)
 		{
-			case 37: dg=player.move(1, dg); break;
-			case 38: dg=player.move(2, dg); break;
-			case 39: dg=player.move(3, dg); break;
-			case 40: dg=player.move(4, dg); break;
+			case 37: g_dungeon=g_player.move(1, g_dungeon); break;
+			case 38: g_dungeon=g_player.move(2, g_dungeon); break;
+			case 39: g_dungeon=g_player.move(3, g_dungeon); break;
+			case 40: g_dungeon=g_player.move(4, g_dungeon); break;
 			default: break;
 		}
 		var charStr = String.fromCharCode(charCode);
 		switch(charStr.toLowerCase())
 		{
-			case 'a': dg=player.move(1,dg);break;
-			case 'w': dg=player.move(2,dg);break;
-			case 'd': dg=player.move(3,dg);break;
-			case 's': dg=player.move(4,dg);break;
+			case 'a': g_dungeon=g_player.move(1,g_dungeon);break;
+			case 'w': g_dungeon=g_player.move(2,g_dungeon);break;
+			case 'd': g_dungeon=g_player.move(3,g_dungeon);break;
+			case 's': g_dungeon=g_player.move(4,g_dungeon);break;
 		}
 
 		// create new if died.
-		if(player.getHealth()<=0)
+		if(g_player.getHealth()<=0)
 		{
-			dg.setProperties(props);
-			dg.resetFloorNumber();
-			dg.generate();
-			dg.previousDungeon = null;
-			dg.nextDungeon = null;
-			player=new Player();
-			player.setPosition(dg.getPlayerStartPosition().x, dg.getPlayerStartPosition().y);
-			player.move(0,dg);
+			g_dungeon.setProperties(props);
+			g_dungeon.resetFloorNumber();
+			g_dungeon.generate();
+			g_dungeon.previousDungeon = null;
+			g_dungeon.nextDungeon = null;
+			g_player=new Player();
+			g_player.setPosition(g_dungeon.getPlayerStartPosition().x, g_dungeon.getPlayerStartPosition().y);
+			g_player.move(0,g_dungeon);
 			setMessage("YOU DIED!<br />Welcome to your new life.");
 		}
-		print(dg,player)
+		print();
 	};
 };
 
