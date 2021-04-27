@@ -22,7 +22,7 @@ body, html
     overflow: hidden;
 }
 
-#values, #message, #buttons
+#values, #message, #buttons, #image
 {
     position: absolute;
     top: 0px;
@@ -50,9 +50,15 @@ body, html
     position: absolute;
     top: 190px;
     right: 0px;
-    min-height: 15px;
+    min-height: 40px;
     font-size: 10pt;
     font-weight: bold;
+}
+
+#image
+{
+    top: 260px;
+    padding: 10px;
 }
 
 #buttons
@@ -67,6 +73,12 @@ body, html
 #windows
 {
     z-index: 100;
+}
+
+.mainimage
+{
+    width:300px;
+    height:300px;
 }
 
 .rightbutton

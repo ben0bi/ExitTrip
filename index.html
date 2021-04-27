@@ -12,6 +12,7 @@
 <div id="dungeon" class="cnt_overlay"></div>
 <div id="values"></div>
 <div id="message">Halli Hallo</div>
+<div id="image"></div>
 <div id="windows" class="cnt_overlay"></div>
 <div id="buttons">
 	<center>
@@ -30,6 +31,10 @@ function print()
 	{
 		$("#message").html(getMessage());
 		log(getMessage());
+	}
+	if(getImage()!="")
+	{
+		$("#image").html("<img src='"+getImage()+"' class='mainimage'/>")
 	}
 }
 

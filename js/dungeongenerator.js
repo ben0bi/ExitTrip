@@ -28,6 +28,7 @@ var DungeonItem = function()
 	this.posY = 0;
 	this.type="coin";
 	this.mapchar="!";
+	this.image="";
 	this.amount = 10;
 }
 
@@ -161,6 +162,7 @@ var DungeonMonster = function()
 	this.posX=0;
 	this.posY=0;
 	this.type="MieserKadser";
+	this.image="data/img/MieserKadser.jpg";
 	this.addHealth=function(value)
 	{
 		me.health+=value;
@@ -232,7 +234,7 @@ var DungeonMonster = function()
 		var msg=me.type+" attacks: -"+atk+" HP<br />You attack: -"+patk+" HP<br />";
 		if(me.health<=0)
 			msg+=me.type+" has died.";
-		setMessage(msg);
+		setMessage(msg, me.image);
 	}
 }
 
@@ -586,12 +588,14 @@ var DungeonGenerator = function()
 					switch(t)
 					{
 						case 1:
-							item.type="health"
-							item.mapchar="&hearts;"
+							item.type="health";
+							item.mapchar="&hearts;";
+							item.image="data/img/rootbeer.png";
 							break;
 						default:
-							item.type="coin"
+							item.type="coin";
 							item.mapchar="$";
+							item.image="data/img/coin.jpg";
 							break;
 					}
 					// TODO: change percentage by player level or such.

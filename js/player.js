@@ -12,8 +12,10 @@ by Beni Yager, 2021
 
 // the message
 var g_message = "";
-var setMessage=function(text) {g_message=text;}
+var g_image = "";
+var setMessage=function(text, image="") {g_message=text;g_image=image;}
 var getMessage=function() {return g_message;}
+var getImage=function() {return g_image;}
 
 var Player = function()
 {
@@ -193,11 +195,11 @@ var Player = function()
                     switch(item.type)
                     {
                         case "health":
-                            setMessage("You pick up some root beer.<br />Heals "+item.amount+" HP");
+                            setMessage("You pick up some root beer.<br />Heals "+item.amount+" HP", item.image);
                             me.addHealth(item.amount);
                             break;
                         case "coin":
-                            setMessage("You pick up "+item.amount+" CryptoBenis.");
+                            setMessage("You pick up "+item.amount+" CryptoBenis.", item.image);
                             m_coins+=item.amount;
                             break;
                         default:
@@ -217,14 +219,14 @@ var Player = function()
         {
             if(dungeon.previousDungeon!=null)
             {
-                setMessage("You go one chapter downwards.");
+                setMessage("You go one chapter downwards.", "data/img/downstairs.jpg");
                 dungeon = dungeon.previousDungeon;
             }
         }
 
         if(mt=='^') // UPwards = downwards in normal roguelikes.
         {
-            setMessage("You go one chapter upwards.");
+            setMessage("You go one chapter upwards.", "data/img/upstairs.jpg");
             if(dungeon.nextDungeon==null)
             {
                 log("> Generating new floor.")

@@ -1,0 +1,11 @@
+{
+    "Monsters":[
+        {
+            "name": "MieserKadser",
+            "image": "data/img/MieserKadser.jpg",
+            "maxhealth": 5,
+            "attack": 1,
+            "level": 0
+        }
+    ]
+}

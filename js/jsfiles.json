@@ -10,6 +10,7 @@
    "LOG": "js/log.js",
    
    "//": "The Dungeon Generator.",
+   "MONSTERS": "js/monsters.js",
    "DUNGEONGENERATOR": "js/dungeongenerator.js",
 
    "//": "The Player",
